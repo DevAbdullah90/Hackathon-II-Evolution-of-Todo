@@ -15,5 +15,8 @@ export const auth = betterAuth({
     session: {
         jwt: true,
     },
+    advanced: {
+        cookiePrefix: "taskoo-v2", // Invalidate old opaque cookies
+    },
     baseURL: process.env.BETTER_AUTH_URL,
 });
