@@ -73,7 +73,8 @@ async def run_agent(messages: list, user_id: str) -> dict:
                 
                 # Execute tool using MCP server
                 try:
-                    tool_result = await mcp.call_tool(function_name, **arguments)
+                    # FastMCP call_tool expects arguments as a dictionary, not unpacked kwargs
+                    tool_result = await mcp.call_tool(function_name, arguments)
                 except Exception as e:
                     logger.error(f"Error executing tool '{function_name}': {e}")
                     raise ToolExecutionError(tool_name=function_name, detail=str(e))
