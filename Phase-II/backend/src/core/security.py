@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from sqlmodel import Session as DBSession, select
 from ..core.database import get_session
 from ..models.auth_session import Session as AuthSession
-from datetime import datetime
+from datetime import datetime, timezone
 
 load_dotenv()
 
@@ -58,7 +58,19 @@ def verify_token(
     session_record = db.exec(statement).first()
 
     if session_record:
-        if session_record.expiresAt > datetime.now():
+        # Fix: Compare timezone-aware datetimes
+        # Postgres usually stores as UTC or offset-aware. 
+        # If session_record.expiresAt is offset-naive, this might need adjustment, 
+        # but usually libraries return aware datetimes if column is TIMESTAMPTZ.
+        # Ideally, we make `now` match the db record's tzinfo.
+        now = datetime.now(timezone.utc)
+        
+        # Ensure session_record.expiresAt is aware, if not assume UTC
+        expires_at = session_record.expiresAt
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+            
+        if expires_at > now:
             print(f"DEBUG: Valid opaque session found for user {session_record.userId}")
             return session_record.userId
         else:
