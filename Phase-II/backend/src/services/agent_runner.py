@@ -36,7 +36,18 @@ async def run_agent(messages: list, user_id: str) -> dict:
     mcp_tools = await mcp.list_tools()
     openai_tools = [convert_mcp_to_openai(tool) for tool in mcp_tools]
     
-    current_messages = messages.copy()
+    # Prepend System Prompt
+    system_prompt = {
+        "role": "system",
+        "content": (
+            f"You are a helpful task management assistant called Taskoo. "
+            f"The current user's ID is '{user_id}'. "
+            f"You do NOT need to ask the user for their ID. "
+            f"When calling tools like 'add_task' or 'list_tasks', use this ID automatically."
+        )
+    }
+    
+    current_messages = [system_prompt] + messages.copy()
     
     # Limit recursion
     max_turns = 5
