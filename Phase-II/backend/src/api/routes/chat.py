@@ -102,7 +102,12 @@ async def chat_endpoint(
         openai_messages.append(m)
         
     # Run Agent
-    agent_result = await run_agent(openai_messages, user_id)
+    try:
+        agent_result = await run_agent(openai_messages, user_id)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Agent execution failed: {str(e)}")
     
     response_text = agent_result.get("response")
     tool_calls = agent_result.get("tool_calls")
