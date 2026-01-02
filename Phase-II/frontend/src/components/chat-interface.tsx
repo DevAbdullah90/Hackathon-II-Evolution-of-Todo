@@ -75,100 +75,107 @@ export function ChatInterface() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar z-10">
-                {messages.length === 0 && (
-                    <div className="h-full flex flex-col items-center justify-center text-center space-y-8 animate-slide-up">
+            <div className="flex-1 w-full relative z-10 overflow-hidden flex flex-col">
+                {messages.length === 0 ? (
+                    /* Empty State - Centered & Non-scrollable */
+                    <div className="h-full w-full flex flex-col items-center justify-center p-6 space-y-6 animate-slide-up">
+                        {/* Icon */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] rounded-[2rem] blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
-                            <div className="relative w-24 h-24 rounded-[2rem] bg-[var(--card-bg)] border border-white/10 flex items-center justify-center shadow-2xl transform group-hover:scale-105 transition-transform duration-300">
-                                <Sparkles className="text-[var(--primary-gradient-from)]" size={48} />
+                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                            <div className="relative w-16 h-16 rounded-2xl bg-[var(--card-bg)] border border-white/10 flex items-center justify-center shadow-xl transform group-hover:scale-105 transition-transform">
+                                <Sparkles className="text-[var(--primary-gradient-from)]" size={28} />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <h3 className="text-3xl font-bold text-white tracking-tight">
+                        {/* Text */}
+                        <div className="space-y-1 text-center">
+                            <h3 className="text-xl font-bold text-white tracking-tight">
                                 How can I help?
                             </h3>
-                            <p className="text-[var(--text-secondary)] text-sm max-w-xs mx-auto leading-relaxed">
-                                I can manage your tasks, organize your day, and help you stay productive.
+                            <p className="text-[var(--text-secondary)] text-xs max-w-[250px] mx-auto leading-relaxed">
+                                Manage tasks, organize your day, and stay productive.
                             </p>
                         </div>
 
-                        <div className="grid w-full gap-3">
+                        {/* Suggestions */}
+                        <div className="grid w-full gap-2">
                             {[
                                 { icon: '📝', text: 'Add a task to submit report' },
-                                { icon: '📅', text: 'What are my tasks for today?' },
+                                { icon: '📅', text: 'Show tasks for today' },
                                 { icon: '✅', text: 'Mark first task as done' }
                             ].map((suggestion, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setLocalInput(suggestion.text)}
-                                    className="group flex items-center gap-4 p-4 w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-2xl transition-all duration-200"
+                                    className="group flex items-center gap-3 p-3 w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-xl transition-all duration-200"
                                 >
-                                    <span className="text-xl opacity-70 group-hover:scale-110 transition-transform">{suggestion.icon}</span>
-                                    <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-white transition-colors">{suggestion.text}</span>
-                                    <ChevronRight className="ml-auto w-4 h-4 text-white/20 group-hover:text-white/60 group-hover:translate-x-0.5 transition-all" />
+                                    <span className="text-base opacity-70 group-hover:scale-110 transition-transform">{suggestion.icon}</span>
+                                    <span className="text-xs font-medium text-[var(--text-secondary)] group-hover:text-white transition-colors">{suggestion.text}</span>
+                                    <ChevronRight className="ml-auto w-3 h-3 text-white/20 group-hover:text-white/60 transition-all opacity-0 group-hover:opacity-100" />
                                 </button>
                             ))}
                         </div>
                     </div>
-                )}
+                ) : (
+                    /* Scrollable Messages */
+                    <div className="flex-1 overflow-y-auto w-full p-6 space-y-6 no-scrollbar">
+                        {messages.map((m) => (
+                            <div
+                                key={m.id}
+                                className={`flex w-full animate-slide-up ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            >
+                                <div className={`flex max-w-[85%] md:max-w-[75%] gap-4 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
 
-                {messages.map((m) => (
-                    <div
-                        key={m.id}
-                        className={`flex w-full animate-slide-up ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div className={`flex max-w-[85%] md:max-w-[75%] gap-4 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-
-                            {/* Avatar */}
-                            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 shadow-md ring-1 ring-white/10 ${m.role === 'user'
-                                ? 'bg-[var(--card-bg)]'
-                                : 'bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)]'
-                                }`}>
-                                {m.role === 'user' ? (
-                                    <User size={14} className="text-[var(--text-secondary)]" />
-                                ) : (
-                                    <Sparkles size={14} className="text-white" />
-                                )}
-                            </div>
-
-                            {/* Bubble */}
-                            <div className={`flex flex-col gap-1.5 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                <div className={`relative px-5 py-3.5 text-sm leading-relaxed shadow-lg ${m.role === 'user'
-                                    ? 'bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] text-white rounded-[1.25rem] rounded-tr-sm'
-                                    : 'bg-[var(--card-bg)] text-[var(--text-primary)] border border-white/5 rounded-[1.25rem] rounded-tl-sm backdrop-blur-sm'
-                                    }`}>
-                                    <div className="whitespace-pre-wrap">{m.content}</div>
-                                </div>
-
-                                {/* Tool Invocations */}
-                                {m.toolInvocations?.map((tool) => (
-                                    <div key={tool.toolCallId} className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)] bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-blue)] animate-pulse"></div>
-                                        <span className="font-mono opacity-80 uppercase tracking-wider">Using: {tool.toolName}</span>
+                                    {/* Avatar */}
+                                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 shadow-md ring-1 ring-white/10 ${m.role === 'user'
+                                            ? 'bg-[var(--card-bg)]'
+                                            : 'bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)]'
+                                        }`}>
+                                        {m.role === 'user' ? (
+                                            <User size={14} className="text-[var(--text-secondary)]" />
+                                        ) : (
+                                            <Sparkles size={14} className="text-white" />
+                                        )}
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ))}
 
-                {isLoading && (
-                    <div className="flex justify-start w-full animate-slide-up">
-                        <div className="flex items-center gap-4">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] flex items-center justify-center shadow-lg ring-1 ring-white/10">
-                                <Bot size={14} className="text-white" />
+                                    {/* Bubble */}
+                                    <div className={`flex flex-col gap-1.5 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                        <div className={`relative px-5 py-3.5 text-sm leading-relaxed shadow-lg ${m.role === 'user'
+                                                ? 'bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] text-white rounded-[1.25rem] rounded-tr-sm'
+                                                : 'bg-[var(--card-bg)] text-[var(--text-primary)] border border-white/5 rounded-[1.25rem] rounded-tl-sm backdrop-blur-sm'
+                                            }`}>
+                                            <div className="whitespace-pre-wrap">{m.content}</div>
+                                        </div>
+
+                                        {/* Tool Invocations */}
+                                        {m.toolInvocations?.map((tool) => (
+                                            <div key={tool.toolCallId} className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)] bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-blue)] animate-pulse"></div>
+                                                <span className="font-mono opacity-80 uppercase tracking-wider">Using: {tool.toolName}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="bg-[var(--card-bg)] px-5 py-4 rounded-[1.25rem] rounded-tl-sm border border-white/5 flex gap-1.5 items-center shadow-lg">
-                                <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce"></span>
+                        ))}
+
+                        {isLoading && (
+                            <div className="flex justify-start w-full animate-slide-up">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--primary-gradient-from)] to-[var(--primary-gradient-to)] flex items-center justify-center shadow-lg ring-1 ring-white/10">
+                                        <Bot size={14} className="text-white" />
+                                    </div>
+                                    <div className="bg-[var(--card-bg)] px-5 py-4 rounded-[1.25rem] rounded-tl-sm border border-white/5 flex gap-1.5 items-center shadow-lg">
+                                        <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                        <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                        <span className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce"></span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
+                        <div ref={messagesEndRef} />
                     </div>
                 )}
-                <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
