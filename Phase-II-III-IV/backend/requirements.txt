@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+openai
+mcp
+python-multipart
+pyjwt[crypto]
+python-dotenv
+psycopg2-binary
