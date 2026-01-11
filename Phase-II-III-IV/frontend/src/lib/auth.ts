@@ -17,5 +17,6 @@ export const auth = betterAuth({
     advanced: {
         cookiePrefix: "taskoo-v2", // Invalidate old opaque cookies
     },
+    trustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",") : [],
     baseURL: process.env.BETTER_AUTH_URL,
 });
