@@ -38,3 +38,8 @@ frontend:
     requests:
       cpu: 100m
       memory: 128Mi
+  env:
+    # Secrets are now loaded from k8s secret 'todo-secrets'
+    BETTER_AUTH_URL: "http://todo.local" # Required by better-auth server-side
+    NEXT_PUBLIC_BETTER_AUTH_URL: "http://todo.local"
+    NEXT_PUBLIC_API_URL: "http://todo.local/api" # Use Ingress path for client-side calls

@@ -1,6 +1,6 @@
 import { authClient } from "./auth-client"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api"
 
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     // Attempt to get session/token
