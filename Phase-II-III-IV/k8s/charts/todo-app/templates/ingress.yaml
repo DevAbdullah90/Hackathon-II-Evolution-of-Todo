@@ -21,4 +21,18 @@ spec:
                 name: {{ include "todo-app.fullname" . }}-frontend
                 port:
                   number: {{ .Values.frontend.service.port }}
+          - path: /api/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "todo-app.fullname" . }}-frontend
+                port:
+                  number: {{ .Values.frontend.service.port }}
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "todo-app.fullname" . }}-backend
+                port:
+                  number: {{ .Values.backend.service.port }}
 {{- end }}

@@ -25,8 +25,9 @@ export function useAgentChat() {
 
     const apiEndpoint = useMemo(() => {
         if (!userId) return undefined;
-        // Ensure we don't duplicate /api if it's already in the env var
-        const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/api\/?$/, '');
+        // Use relative path by default to rely on Ingress/Proxy
+        const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/api\/?$/, '');
+        // If baseUrl is empty (default), the result is just /api/... which is relative to current origin
         return `${baseUrl}/api/${userId}/chat`;
     }, [userId]);
 

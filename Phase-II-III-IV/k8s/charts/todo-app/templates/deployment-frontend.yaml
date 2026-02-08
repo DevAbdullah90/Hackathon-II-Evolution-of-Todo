@@ -28,8 +28,15 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+          envFrom:
+            - secretRef:
+                name: todo-secrets
           env:
-            - name: NEXT_PUBLIC_API_URL
-              value: "http://{{ include "todo-app.fullname" . }}-backend:{{ .Values.backend.service.port }}"
+            {{- if .Values.frontend.env }}
+            {{- range $key, $value := .Values.frontend.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
