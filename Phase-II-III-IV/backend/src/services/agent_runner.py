@@ -7,7 +7,10 @@ from src.core.exceptions import ToolExecutionError
 
 logger = logging.getLogger(__name__)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
 
 def convert_mcp_to_openai(tool):
     """
@@ -54,7 +57,7 @@ async def run_agent(messages: list, user_id: str) -> dict:
     
     for _ in range(max_turns):
         response = client.chat.completions.create(
-            model="gpt-4o", # or gpt-3.5-turbo
+            model="gemini-3-pro-preview", # Using Gemini 2.0 Flash
             messages=current_messages,
             tools=openai_tools if openai_tools else None,
             tool_choice="auto" if openai_tools else None
